@@ -2,5 +2,67 @@
   "title": "vol. 01 — 朝の呼吸",
   "description": "生田緑地の写真群から紡ぐ、朝の呼吸の時空間",
   "date": "2026-06-17",
-  "order": 1
+  "order": 1,
+  "works": [
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/001.webp",
+      "monologue": "時間がしずかに溶けだす朝の気配"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/002.webp",
+      "monologue": "光が葉脈を透かして影だけが深く沈んでいく"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/003.webp",
+      "monologue": "足元の小さなノイズに呼吸をあわせる"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/004.webp",
+      "monologue": "並んだ静寂がいつまでも崩れないように"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/005.webp",
+      "monologue": "もうひとつの静寂がとなりに滑り込む"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/006.webp",
+      "monologue": "ぽつりと置かれた記憶の抜け殻のような影"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/007.webp",
+      "monologue": "風が通り抜けたあとの冷たさだけが漂う"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/008.webp",
+      "monologue": "雨粒のように転がる光をあつめて"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/009.webp",
+      "monologue": "視界を覆う緑の侵食に身をまかせる"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/010.webp",
+      "monologue": "誰もいないベンチに夕暮れが腰掛けている"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/011.webp",
+      "monologue": "対比する光が交錯する境界線"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/012.webp",
+      "monologue": "対比する影がすべてを覆い隠す前に"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/013.webp",
+      "monologue": "木漏れ日の底に沈むスープのようなシミを見つめる"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/014.webp",
+      "monologue": "時間が引き止められたような錯覚に陥る"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/015.webp",
+      "monologue": "アリが運ぶ小さな沈黙が足元を通り過ぎる"
+    }
+  ]
 }

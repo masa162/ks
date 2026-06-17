@@ -2,5 +2,67 @@
   "title": "vol. 03 — 溶ける光",
   "description": "生田緑地の写真群から紡ぐ、溶ける光の時空間",
   "date": "2026-06-15",
-  "order": 3
+  "order": 3,
+  "works": [
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/031.webp",
+      "monologue": "錆びた鉄格子の向こう側にある別の光"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/032.webp",
+      "monologue": "さっきこぼした涙のあとのような小さな光る点"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/033.webp",
+      "monologue": "鳥の羽ばたきが残した空気の微震"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/034.webp",
+      "monologue": "アスファルトが熱を失っていくときの匂い"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/035.webp",
+      "monologue": "まぶたの裏側に焼きついた残像のゆらぎ"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/036.webp",
+      "monologue": "どこからか流れてくるピアノの音の頼りなさ"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/037.webp",
+      "monologue": "重ね合わせた時間の層が少しずつズレていく"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/038.webp",
+      "monologue": "冷たい指先が触れたガラスの結露"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/039.webp",
+      "monologue": "誰も気づかない場所に咲いた小さな境界線"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/040.webp",
+      "monologue": "時間を巻き戻すように流れる雲の影"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/041.webp",
+      "monologue": "あの日見た光の粒子が今も宙に漂っている"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/042.webp",
+      "monologue": "足跡のない小道がどこまでも続いている気がして"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/043.webp",
+      "monologue": "スープの底に沈んだ静かな貝殻の記憶"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/044.webp",
+      "monologue": "光る時間がゆっくりと闇に浸食されていく"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/045.webp",
+      "monologue": "こぼれ落ちたスープが描く不完全な地図"
+    }
+  ]
 }

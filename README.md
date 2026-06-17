@@ -43,42 +43,36 @@
 ### 1. ディレクトリ構造
 ```text
 src/content/
-├── series/
-│     ├── vol-01.json  (各号のメタデータ)
-│     └── ...
-└── works/
-      ├── vol-01/      (各号のフォルダ)
-      │     ├── 01.md  (各写真とモノローグ)
-      │     └── ...
+└── series/
+      ├── vol-01.json  (各号のメタデータと写真リスト)
+      ├── vol-02.json
       └── ...
 ```
 
 ### 2. 新しい号の追加手順
 
-#### 手順 A: シリーズ（号）の定義
-`src/content/series/` の下に `vol-XX.json` を作成する
+`src/content/series/` の下に `vol-XX.json` を新規作成するだけで、新しい号が自動的にメニューや漂流プールに追加される
 
 ```json
 {
   "title": "vol. 04 — 新たなサブタイトル",
   "description": "その号のテーマや漂う空気の説明文",
   "date": "2026-06-17",
-  "order": 4
+  "order": 4,
+  "works": [
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/001.webp",
+      "monologue": "バインドする詩的な言葉（文末に。をつけない）"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/002.webp",
+      "monologue": "もう一つの言葉"
+    }
+  ]
 }
 ```
 
-#### 手順 B: 作品ファイルの作成
-`src/content/works/vol-XX/` のフォルダを作成し、その中に `01.md`, `02.md`... の順でMarkdownファイルを配置する（1号あたり15〜20枚を推奨）
-
-```markdown
----
-series: "vol-04"
-imageUrl: "https://img.tokyo86.com/dnmi15/001.webp"  (86imgのCDN URL)
-order: 1
-monologue: "バインドする詩的な言葉（文末に。をつけない）"
----
-```
-※ `layout`, `spacing`, `textPosition` のフロントマター項目は、個別に固定表示したい場合のみ明示的に記述する（記述がない場合はジェネラティブエンジンにより自動でアシンメトリーな配置が割り当てられる）
+※ 各写真アイテムにおいて、 `layout`, `spacing`, `textPosition` を明示的に追加指定することで、アシンメトリーな配置を固定することも可能（未指定の場合はジェネラティブエンジンにより自動で多様な配置が割り当てられる）
 
 ---
 

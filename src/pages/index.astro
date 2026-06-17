@@ -2,21 +2,25 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-const works = await getCollection('works');
-const worksData = works.map(w => ({
-  id: w.id,
-  series: w.data.series,
-  imageUrl: w.data.imageUrl,
-  order: w.data.order,
-  monologue: w.data.monologue,
-  layout: w.data.layout,
-  spacing: w.data.spacing,
-  textPosition: w.data.textPosition
-}));
-
 const seriesList = await getCollection('series');
+const sortedSeriesList = seriesList.sort((a, b) => a.data.order - b.data.order);
+
+// Flatten the works lists into a single collection, injecting the series ID and preserving order
+const worksData = sortedSeriesList.flatMap(s => {
+  return s.data.works.map((w, index) => ({
+    id: `${s.id}-${index}`,
+    series: s.id,
+    imageUrl: w.imageUrl,
+    order: index + 1,
+    monologue: w.monologue,
+    layout: w.layout,
+    spacing: w.spacing,
+    textPosition: w.textPosition
+  }));
+});
+
 const seriesMap = {};
-seriesList.forEach(s => {
+sortedSeriesList.forEach(s => {
   seriesMap[s.id] = {
     title: s.data.title,
     description: s.data.description,

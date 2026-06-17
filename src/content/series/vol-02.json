@@ -2,5 +2,67 @@
   "title": "vol. 02 — 侵食する緑",
   "description": "生田緑地の写真群から紡ぐ、侵食する緑の時空間",
   "date": "2026-06-16",
-  "order": 2
+  "order": 2,
+  "works": [
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/016.webp",
+      "monologue": "闇に浮かび上がる細い輪郭線だけを頼りに"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/017.webp",
+      "monologue": "湿った土の匂いとこぼれたスープのあたたかさ"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/018.webp",
+      "monologue": "横並びに配置された無関係な断片たち"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/019.webp",
+      "monologue": "つなぎ合わされた境界線からあふれ出す光"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/020.webp",
+      "monologue": "すべてが溶けてどこでもない場所へ繋がる"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/021.webp",
+      "monologue": "遠くで聞こえる電車の音が時間を引き伸ばす"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/022.webp",
+      "monologue": "ガラスの破片に反射する冷たいプリズム"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/023.webp",
+      "monologue": "手のひらに残るかすかな水滴の記憶"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/024.webp",
+      "monologue": "名前を失った植物が静かに息をしている"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/025.webp",
+      "monologue": "昨日と明日のあいだに挟まれた薄い時間"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/026.webp",
+      "monologue": "コンクリートの割れ目から吹き出す青い風"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/027.webp",
+      "monologue": "だれかの残したささやきが壁に張り付いている"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/028.webp",
+      "monologue": "水面に浮かぶ雲がゆっくりと形を崩す"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/029.webp",
+      "monologue": "影の長さが私よりも少しだけ長い"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/dnmi15/030.webp",
+      "monologue": "吸い込まれそうな深いみどりの奥へ"
+    }
+  ]
 }
