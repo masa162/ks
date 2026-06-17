@@ -1,0 +1,113 @@
+{
+  "title": "vol. 04 — 京都、静かな雨の輪郭",
+  "description": "雨の京都を舞台に、移ろう心象風景と言葉を紡いだ15編の写真詩",
+  "date": "2026-06-17",
+  "order": 4,
+  "works": [
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/011.webp",
+      "monologue": "京都駅のプラットフォームに降り立つと、湿った冷たい風が鼻先をかすめた",
+      "layout": "full",
+      "spacing": "medium",
+      "textPosition": "overlay-bottom-left"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/004.webp",
+      "monologue": "曇り空と雨を避けるように、黒いガラス越しに街を眺めている",
+      "layout": "pair",
+      "spacing": "large",
+      "textPosition": "side-right"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/006.webp",
+      "monologue": "濡れたアスファルトが、テールランプの赤を不均一に引き伸ばす",
+      "layout": "scatter-left",
+      "spacing": "medium",
+      "textPosition": "under"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/016.webp",
+      "monologue": "雨を含んで重たげに首をかしげる紫陽花の青に、静寂がたまる",
+      "layout": "medium-right",
+      "spacing": "large",
+      "textPosition": "side-left"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/010.webp",
+      "monologue": "石畳を滑るカタツムリが、時間の速度を静かに書き換えていく",
+      "layout": "small-center",
+      "spacing": "huge",
+      "textPosition": "under"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/002.webp",
+      "monologue": "強い閃光が一瞬だけ切り取る、わたしの輪郭とこぼれた影",
+      "layout": "pair",
+      "spacing": "none",
+      "textPosition": "overlay-top-right"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/009.webp",
+      "monologue": "水たまりのなかに逆さまに沈んでいる、もうひとつの古い街",
+      "layout": "scatter-right",
+      "spacing": "medium",
+      "textPosition": "side-left"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/007.webp",
+      "monologue": "雨に濡れた苔が、何百年もの静けさをいっそう深く吸い込んでいく",
+      "layout": "full",
+      "spacing": "none",
+      "textPosition": "overlay-bottom-right"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/012.webp",
+      "monologue": "真鍮の鍵に刻まれた部屋番号が、旅のわずかな定点となる",
+      "layout": "medium-left",
+      "spacing": "medium",
+      "textPosition": "side-right"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/005.webp",
+      "monologue": "窓ガラスに触れると、外の雨が冷たい記憶のように指先へ伝わった",
+      "layout": "pair",
+      "spacing": "large",
+      "textPosition": "under"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/014.webp",
+      "monologue": "朱色の柵が、雨に洗われて少しずつ時間の色を脱ぎ捨てる",
+      "layout": "scatter-left",
+      "spacing": "small",
+      "textPosition": "side-right"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/015.webp",
+      "monologue": "走り去る光の尾が、記憶 of ノイズとなって頭のなかで回り続ける",
+      "layout": "full",
+      "spacing": "medium",
+      "textPosition": "overlay-top-right"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/001.webp",
+      "monologue": "ピントの合わない日々のなかにこそ、こぼれたスープの熱量がある",
+      "layout": "full",
+      "spacing": "medium",
+      "textPosition": "overlay-top-left"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/013.webp",
+      "monologue": "濡れてふやけた切符が、いつかの目的地をぼんやりと指し示している",
+      "layout": "medium-right",
+      "spacing": "large",
+      "textPosition": "side-left"
+    },
+    {
+      "imageUrl": "https://img.tokyo86.com/9e95j2/003.webp",
+      "monologue": "水面に浮かぶ一枚の青楓が、静かな雨の輪郭を教えてくれた",
+      "layout": "small-center",
+      "spacing": "huge",
+      "textPosition": "under"
+    }
+  ]
+}
