@@ -1,0 +1,803 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const works = await getCollection('works');
+const worksData = works.map(w => ({
+  id: w.id,
+  series: w.data.series,
+  imageUrl: w.data.imageUrl,
+  order: w.data.order,
+  monologue: w.data.monologue,
+  layout: w.data.layout,
+  spacing: w.data.spacing,
+  textPosition: w.data.textPosition
+}));
+
+const seriesList = await getCollection('series');
+const seriesMap = {};
+seriesList.forEach(s => {
+  seriesMap[s.id] = {
+    title: s.data.title,
+    description: s.data.description,
+    date: s.data.date
+  };
+});
+---
+
+<Layout title="ks / 光る時間と、こぼれたsoup">
+  <div class="webzine-container">
+    <!-- Immersive Top Space -->
+    <section class="intro-section">
+      <div id="intro-inner" class="intro-inner">
+        <h1 id="intro-title" class="logo-text">光る時間と、こぼれたsoup</h1>
+        <p id="intro-subtitle" class="intro-monologue">
+          地続きの時間が光っては、溶け、闇に沈み、浮かぶ
+        </p>
+      </div>
+    </section>
+
+    <!-- Works Stream (Populated dynamically on client side) -->
+    <div id="works-stream" class="works-stream"></div>
+
+    <!-- Loading Indicator -->
+    <div id="stream-loader" class="stream-loader">
+      <span class="loader-dot"></span>
+    </div>
+  </div>
+
+  <!-- Store data in hidden container for client JS -->
+  <div
+    id="ks-data"
+    style="display:none;"
+    data-works={JSON.stringify(worksData)}
+    data-series={JSON.stringify(seriesMap)}
+  ></div>
+</Layout>
+
+<script>
+  // Layout Templates (including pure typography screens)
+  const LAYOUT_TEMPLATES = [
+    { layout: 'medium-left', spacing: 'medium', textPosition: 'side-right' },
+    { layout: 'scatter-right', spacing: 'large', textPosition: 'under' },
+    { layout: 'pair', spacing: 'medium', textPosition: 'under' },
+    { layout: 'pair', spacing: 'none', textPosition: 'under' },
+    { layout: 'text-only-center', spacing: 'large', textPosition: 'under' },
+    { layout: 'full', spacing: 'huge', textPosition: 'overlay-bottom-left' },
+    { layout: 'medium-right', spacing: 'large', textPosition: 'side-left' },
+    { layout: 'text-only-vertical', spacing: 'huge', textPosition: 'under' },
+    { layout: 'small-center', spacing: 'huge', textPosition: 'overlay-top-right' },
+    { layout: 'scatter-left', spacing: 'medium', textPosition: 'under' },
+    { layout: 'text-only-skew', spacing: 'large', textPosition: 'under' }
+  ];
+
+  // 20 Reveal Animations
+  const REVEAL_CLASSES = [
+    'reveal-fade-up',
+    'reveal-fade-down',
+    'reveal-fade-left',
+    'reveal-fade-right',
+    'reveal-blur',
+    'reveal-scale-up',
+    'reveal-scale-down',
+    'reveal-foggy',
+    'reveal-clip-h',
+    'reveal-clip-v',
+    'reveal-skew',
+    'reveal-exposure',
+    'reveal-high-contrast',
+    'reveal-ghost',
+    'reveal-drift-up',
+    'reveal-ink',
+    'reveal-slide-blur',
+    'reveal-vortex',
+    'reveal-flicker',
+    'reveal-glitch'
+  ];
+
+  // 20 Portal Captions
+  const PORTAL_CAPTIONS = [
+    '別の路へ',
+    '🛗',
+    '時間を折りたたむ',
+    'スープがこぼれる瞬間',
+    '沈黙の隙間',
+    'どこでもないどこかへ',
+    '光が溶ける音',
+    '影を追いかけて',
+    '時間を忘れる',
+    '🚪',
+    '別の朝へ',
+    '記憶の裏返し',
+    '通り抜ける風',
+    '蟻の歩みで別の次元へ',
+    '雨の境界線を越える',
+    '目を閉じる瞬間',
+    'スープが冷める前に',
+    '静貝の気配',
+    '踏切の向こう側',
+    '🛗 別の次元へ'
+  ];
+
+  // Helper: Generates deterministic layout
+  function getProceduralLayout(seriesId: string, order: number, overrides: any) {
+    let hash = 0;
+    for (let i = 0; i < seriesId.length; i++) {
+      hash = seriesId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const templateIdx = Math.abs(hash + order) % LAYOUT_TEMPLATES.length;
+    const template = LAYOUT_TEMPLATES[templateIdx];
+
+    return {
+      layout: overrides.layout || template.layout,
+      spacing: overrides.spacing || template.spacing,
+      textPosition: overrides.textPosition || template.textPosition,
+    };
+  }
+
+  // Load Data
+  const dataEl = document.getElementById('ks-data');
+  const allWorks = JSON.parse(dataEl?.getAttribute('data-works') || '[]');
+  const seriesMap = JSON.parse(dataEl?.getAttribute('data-series') || '{}');
+
+  // State
+  let activeSeriesId = 'all';
+  let filteredWorks: any[] = [];
+  let displayQueue: any[] = [];
+  let nextQueueIndex = 0;
+  let worksRenderedCount = 0;
+
+  // DOM Elements
+  const worksStream = document.getElementById('works-stream');
+  const introTitle = document.getElementById('intro-title');
+  const introSubtitle = document.getElementById('intro-subtitle');
+  const streamLoader = document.getElementById('stream-loader');
+
+  // Shuffle Helper
+  function shuffleArray(array: any[]) {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  // Initialize stream
+  function initStream(seriesId: string, isWarp = false) {
+    activeSeriesId = seriesId;
+    worksRenderedCount = 0;
+
+    if (seriesId === 'all') {
+      filteredWorks = [...allWorks];
+      if (introTitle) introTitle.textContent = "光る時間と、こぼれたsoup";
+      if (introSubtitle) introSubtitle.textContent = "地続きの時間が光っては、溶け、闇に沈み、浮かぶ";
+    } else {
+      filteredWorks = allWorks.filter((w: any) => w.series === seriesId);
+      const seriesInfo = seriesMap[seriesId];
+      if (seriesInfo) {
+        if (introTitle) introTitle.textContent = seriesInfo.title;
+        if (introSubtitle) introSubtitle.textContent = seriesInfo.description || "";
+      }
+    }
+
+    displayQueue = shuffleArray(filteredWorks);
+    nextQueueIndex = 0;
+
+    if (worksStream) worksStream.innerHTML = '';
+
+    renderNextBatch(6);
+    observeNewItems();
+  }
+
+  // Render a batch of works
+  function renderNextBatch(count: number) {
+    if (!worksStream || displayQueue.length === 0) return;
+
+    for (let i = 0; i < count; i++) {
+      if (nextQueueIndex >= displayQueue.length) {
+        displayQueue = shuffleArray(filteredWorks);
+        nextQueueIndex = 0;
+      }
+
+      // Check if we should insert a dimensional portal
+      if (worksRenderedCount > 0 && worksRenderedCount % 7 === 0) {
+        // Pick random portal caption
+        const caption = PORTAL_CAPTIONS[Math.floor(Math.random() * PORTAL_CAPTIONS.length)];
+        const portalHtml = `
+          <div class="stream-item space-large layout-portal fade-in-section reveal-blur">
+            <button class="portal-btn" onclick="window.dispatchEvent(new CustomEvent('ks-warp-drift'))">
+              <span class="portal-line"></span>
+              <span class="portal-label">${caption}</span>
+              <span class="portal-line"></span>
+            </button>
+          </div>
+        `;
+        worksStream.insertAdjacentHTML('beforeend', portalHtml);
+      }
+
+      const work = displayQueue[nextQueueIndex];
+      nextQueueIndex++;
+      worksRenderedCount++;
+
+      // Compute dynamic layout
+      const layoutData = getProceduralLayout(work.series, work.order, work);
+      const spaceClass = `space-${layoutData.spacing}`;
+      const layoutClass = `layout-${layoutData.layout}`;
+
+      // Pick random reveal animation class
+      const revealClass = REVEAL_CLASSES[Math.floor(Math.random() * REVEAL_CLASSES.length)];
+
+      let itemHtml = '';
+
+      if (layoutData.layout.startsWith('text-only-')) {
+        // Pure Typographic Layout (No image)
+        itemHtml = `
+          <div class="stream-item ${spaceClass} ${layoutClass} ${revealClass} fade-in-section">
+            <div class="typography-wrapper">
+              <p class="typo-text">${work.monologue || '...'}</p>
+            </div>
+          </div>
+        `;
+      } else {
+        // Standard Image Layout
+        itemHtml = `
+          <div class="stream-item ${spaceClass} ${layoutClass} ${revealClass} fade-in-section">
+            <div class="image-container">
+              <div class="image-wrapper">
+                <img src="${work.imageUrl}" alt="" class="stream-image" loading="lazy" />
+        `;
+
+        if (work.monologue && (layoutData.textPosition.startsWith('overlay-') || layoutData.textPosition.startsWith('side-'))) {
+          itemHtml += `
+            <div class="monologue-box position-${layoutData.textPosition}">
+              <span class="monologue-text">${work.monologue}</span>
+            </div>
+          `;
+        }
+
+        itemHtml += `
+              </div>
+        `;
+
+        if (work.monologue && layoutData.textPosition === 'under') {
+          itemHtml += `
+            <div class="monologue-box position-under">
+              <p class="monologue-text">${work.monologue}</p>
+            </div>
+          `;
+        }
+
+        itemHtml += `
+            </div>
+          </div>
+        `;
+      }
+
+      worksStream.insertAdjacentHTML('beforeend', itemHtml);
+    }
+
+    observeNewItems();
+  }
+
+  // Observe items for fade-in scroll animation
+  function observeNewItems() {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in-section:not(.is-visible)').forEach(item => {
+      observer.observe(item);
+    });
+  }
+
+  // Trigger timetrip warp transition
+  function triggerWarp(targetSeriesId: string) {
+    window.dispatchEvent(new CustomEvent('ks-trigger-warp'));
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' as any });
+      initStream(targetSeriesId, true);
+    }, 600);
+  }
+
+  // Listeners
+  window.addEventListener('ks-change-series', (e: any) => {
+    triggerWarp(e.detail.seriesId);
+  });
+
+  window.addEventListener('ks-warp-drift', () => {
+    triggerWarp(activeSeriesId);
+  });
+
+  // Infinite Scroll Trigger
+  if (streamLoader) {
+    const loaderObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setTimeout(() => {
+          renderNextBatch(4);
+        }, 300);
+      }
+    }, { rootMargin: '200px' });
+
+    loaderObserver.observe(streamLoader);
+  }
+
+  // Start stream on load
+  initStream('all');
+</script>
+
+<style>
+  .webzine-container {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Intro Section */
+  .intro-section {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+  }
+
+  .intro-inner {
+    text-align: center;
+    max-width: 600px;
+  }
+
+  .logo-text {
+    font-size: 2.2rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+  }
+
+  .intro-monologue {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    line-height: 2.2;
+    font-family: var(--font-serif);
+  }
+
+  /* Works Stream */
+  .works-stream {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+
+  .stream-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .image-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .image-wrapper {
+    position: relative;
+    overflow: hidden;
+    background-color: #040507;
+    border: 1px solid var(--border-color);
+    transition: border-color 1.2s ease;
+  }
+
+  .image-wrapper:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .stream-image {
+    width: 100%;
+    height: auto;
+    filter: grayscale(25%) contrast(92%);
+    transition: transform 3s cubic-bezier(0.16, 1, 0.3, 1), filter 3s ease;
+  }
+
+  .image-wrapper:hover .stream-image {
+    transform: scale(1.02);
+    filter: grayscale(0%) contrast(100%);
+  }
+
+  /* Monologue Boxes */
+  .monologue-box {
+    font-family: var(--font-serif);
+    pointer-events: none;
+  }
+
+  .monologue-text {
+    font-size: 0.9rem;
+    line-height: 2.2;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+  }
+
+  /* Overlay Positions (Vertical Text) */
+  .position-overlay-top-left,
+  .position-overlay-top-right,
+  .position-overlay-bottom-left,
+  .position-overlay-bottom-right {
+    position: absolute;
+    z-index: 10;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    height: 80%;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .position-overlay-top-left .monologue-text,
+  .position-overlay-top-right .monologue-text,
+  .position-overlay-bottom-left .monologue-text,
+  .position-overlay-bottom-right .monologue-text {
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.85);
+  }
+
+  .position-overlay-top-left {
+    top: 2.5rem;
+    left: 2.5rem;
+  }
+
+  .position-overlay-top-right {
+    top: 2.5rem;
+    right: 2.5rem;
+  }
+
+  .position-overlay-bottom-left {
+    bottom: 2.5rem;
+    left: 2.5rem;
+    justify-content: flex-end;
+  }
+
+  .position-overlay-bottom-right {
+    bottom: 2.5rem;
+    right: 2.5rem;
+    justify-content: flex-end;
+  }
+
+  /* Side Positions (Floating) */
+  .position-side-left {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: -12rem;
+    width: 10rem;
+    text-align: right;
+    writing-mode: vertical-rl;
+    height: auto;
+  }
+
+  .position-side-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: -12rem;
+    width: 10rem;
+    text-align: left;
+    writing-mode: vertical-rl;
+    height: auto;
+  }
+
+  /* Under position */
+  .position-under {
+    margin-top: 2rem;
+    max-width: 600px;
+    align-self: center;
+    text-align: center;
+  }
+
+  .position-under .monologue-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Dimensional Portal Style */
+  .layout-portal {
+    align-items: center;
+    width: 100%;
+    margin-top: 15rem;
+    margin-bottom: 5rem;
+  }
+
+  .portal-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+    outline: none;
+  }
+
+  .portal-line {
+    width: 1px;
+    height: 60px;
+    background-color: var(--border-color);
+    transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s ease;
+  }
+
+  .portal-btn:hover {
+    color: var(--accent-color);
+  }
+
+  .portal-btn:hover .portal-line {
+    height: 100px;
+    background-color: var(--accent-color);
+  }
+
+  /* Typographic Layout Styles */
+  .typography-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-family: var(--font-serif);
+    color: var(--text-color);
+  }
+
+  .typo-text {
+    font-weight: 200;
+    line-height: 2;
+  }
+
+  /* Layout 1: Centered Big Text */
+  .layout-text-only-center {
+    align-items: center;
+  }
+  .layout-text-only-center .typography-wrapper {
+    justify-content: center;
+    min-height: 35vh;
+  }
+  .layout-text-only-center .typo-text {
+    font-size: 1.8rem;
+    text-align: center;
+    max-width: 800px;
+    letter-spacing: 0.12em;
+  }
+
+  /* Layout 2: Vertical Japanese Column */
+  .layout-text-only-vertical {
+    align-items: center;
+  }
+  .layout-text-only-vertical .typography-wrapper {
+    justify-content: center;
+    min-height: 55vh;
+  }
+  .layout-text-only-vertical .typo-text {
+    font-size: 1.6rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    height: 380px;
+    letter-spacing: 0.25em;
+    line-height: 2.5;
+  }
+
+  /* Layout 3: Skewed Italic Statement */
+  .layout-text-only-skew {
+    align-items: flex-start;
+  }
+  .layout-text-only-skew .typography-wrapper {
+    padding-left: 12%;
+    min-height: 35vh;
+  }
+  .layout-text-only-skew .typo-text {
+    font-size: 1.9rem;
+    font-style: italic;
+    transform: rotate(-1.5deg);
+    color: var(--accent-color);
+    max-width: 700px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Specific layout structures */
+  .layout-full {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding: 0 4rem;
+  }
+  .layout-full .image-container {
+    align-items: center;
+  }
+  .layout-full .image-wrapper {
+    width: 100%;
+    max-height: 85vh;
+  }
+  .layout-full img {
+    object-fit: cover;
+    max-height: 85vh;
+  }
+
+  .layout-medium-left .image-container {
+    align-items: flex-start;
+  }
+  .layout-medium-left .image-wrapper {
+    width: 60%;
+  }
+
+  .layout-medium-right .image-container {
+    align-items: flex-end;
+  }
+  .layout-medium-right .image-wrapper {
+    width: 60%;
+  }
+
+  .layout-small-center .image-container {
+    align-items: center;
+  }
+  .layout-small-center .image-wrapper {
+    width: 35%;
+  }
+
+  .layout-scatter-left .image-container {
+    align-items: flex-start;
+  }
+  .layout-scatter-left .image-wrapper {
+    width: 25%;
+    margin-left: 10%;
+  }
+
+  .layout-scatter-right .image-container {
+    align-items: flex-end;
+  }
+  .layout-scatter-right .image-wrapper {
+    width: 25%;
+    margin-right: 10%;
+  }
+
+  .layout-pair {
+    width: 46%;
+  }
+  .layout-pair:nth-of-type(even) {
+    margin-left: auto;
+  }
+  .layout-pair .image-wrapper {
+    width: 100%;
+  }
+
+  /* Stream Loader */
+  .stream-loader {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 8rem 0;
+  }
+
+  .loader-dot {
+    width: 4px;
+    height: 4px;
+    background-color: var(--text-muted);
+    border-radius: 50%;
+    animation: pulse 1.8s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .position-side-left {
+      left: -8rem;
+      width: 7rem;
+    }
+    .position-side-right {
+      right: -8rem;
+      width: 7rem;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .position-side-left, .position-side-right {
+      position: static;
+      transform: none;
+      width: 100%;
+      text-align: center;
+      writing-mode: horizontal-tb;
+      margin-top: 1.5rem;
+    }
+    .works-stream {
+      padding: 0 2rem;
+    }
+    
+    .layout-text-only-skew .typography-wrapper {
+      padding-left: 0;
+      justify-content: center;
+    }
+    .layout-text-only-skew .typo-text {
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .logo-text {
+      font-size: 1.8rem;
+    }
+
+    .works-stream {
+      padding: 0 1rem;
+    }
+
+    .layout-full {
+      padding: 0 1rem;
+    }
+
+    .layout-medium-left .image-wrapper,
+    .layout-medium-right .image-wrapper,
+    .layout-small-center .image-wrapper,
+    .layout-scatter-left .image-wrapper,
+    .layout-scatter-right .image-wrapper,
+    .layout-pair {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    .layout-pair:nth-of-type(even) {
+      margin-left: 0;
+    }
+
+    .position-overlay-top-left,
+    .position-overlay-top-right,
+    .position-overlay-bottom-left,
+    .position-overlay-bottom-right {
+      position: static;
+      writing-mode: horizontal-tb;
+      height: auto;
+      padding: 1rem 0 0 0;
+    }
+
+    .position-overlay-top-left .monologue-text,
+    .position-overlay-top-right .monologue-text,
+    .position-overlay-bottom-left .monologue-text,
+    .position-overlay-bottom-right .monologue-text {
+      color: var(--text-muted);
+      text-shadow: none;
+    }
+
+    .monologue-text {
+      font-size: 0.85rem;
+    }
+
+    .typo-text {
+      font-size: 1.25rem !important;
+      writing-mode: horizontal-tb !important;
+      height: auto !important;
+      text-align: center !important;
+      padding: 0 1rem;
+      transform: none !important;
+    }
+  }
+</style>

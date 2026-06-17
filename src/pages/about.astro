@@ -1,0 +1,149 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="about / ks">
+  <div class="about-container">
+    <div class="about-content">
+      <header class="about-header fade-in-section">
+        <h1 class="about-title">光る時間と、こぼれたsoup</h1>
+        <p class="about-subtitle">manga artist's eye & technological amplifier</p>
+      </header>
+
+      <section class="about-body fade-in-section">
+        <p>
+          かつて絵画が写真の出現によって揺らいだように
+          現在、デッサン力や機材のボケ味だけで武装した表現は、AIという巨大なアンプ（増幅器）によって平坦化されつつある
+        </p>
+
+        <p>
+          その平坦な地平において、最後に残るクリエイティビティの核は「ネーム」であると考えている
+          何を、どういう文脈で、どのような感情のゆらぎとして配置するかという設計図
+          その極小の火種さえあれば、アンプを通してどんな高解像度な世界へも自在に増幅できる
+        </p>
+
+        <p>
+          このWebzineは、漫画家としての視線（ネーム）と、生成技術（アンプ）を組み合わせた
+          1コマの沈黙のマンガのような、新しい写真表現の実験場である
+        </p>
+
+        <p>
+          京都や鎌倉、生田緑地の光線と時間の流れの中に、
+          あえてカタツムリや、こぼれたスープのシミといった「思いがけない偶然のノイズ」を滑り込ませる
+          それらの不完全なノイズこそが、この管理されたデジタル空間に、人間らしい呼吸を吹き込む痕跡になると信じている
+        </p>
+      </section>
+
+      <div class="about-profile fade-in-section">
+        <div class="profile-title">creator</div>
+        <div class="profile-name">中山正之 / masayuki nakayama</div>
+        <p class="profile-description">
+          1986年生まれ　イラスト寄りの漫画家
+          言葉と、写真と、グラフィックの境界線上を徘徊しながら
+          自前サイトのアーカイブとXでの過程公開によるハイブリッドな発信を続けている
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .about-container {
+    max-width: 650px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 12rem 2rem 4rem 2rem;
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+  }
+
+  .about-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .about-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--text-color);
+    letter-spacing: 0.05em;
+  }
+
+  .about-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-color);
+  }
+
+  .about-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    line-height: 2.2;
+    letter-spacing: 0.08em;
+  }
+
+  .about-profile {
+    border-top: 1px solid var(--border-color);
+    padding-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .profile-title {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--text-muted);
+  }
+
+  .profile-name {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-color);
+    letter-spacing: 0.05em;
+  }
+
+  .profile-description {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 2.2;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 768px) {
+    .about-container {
+      padding-top: 8rem;
+    }
+    
+    .about-content {
+      gap: 3rem;
+    }
+
+    .about-title {
+      font-size: 1.5rem;
+    }
+
+    .about-body {
+      gap: 1.8rem;
+      font-size: 0.9rem;
+    }
+
+    .about-profile {
+      padding-top: 2.5rem;
+    }
+  }
+</style>

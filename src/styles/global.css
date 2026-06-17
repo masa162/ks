@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+JP:wght@200;300;400&display=swap');
+
+:root {
+  /* HSL Color Palette - Extremely deep, silent, dark theme */
+  --bg-color: hsl(220, 20%, 3%);
+  --bg-card: hsl(220, 20%, 5%);
+  --text-color: hsl(0, 0%, 88%);
+  --text-muted: hsl(220, 10%, 45%);
+  --accent-color: hsl(35, 40%, 60%); /* Silent gold / bronze */
+  --accent-muted: hsl(220, 10%, 30%);
+  --border-color: rgba(255, 255, 255, 0.04);
+  --max-width: 1300px;
+  
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Transitions */
+  --transition-smooth: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 2;
+  letter-spacing: 0.05em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Custom Scrollbar - Extremely thin and minimal */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-muted);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Animation Utilities for Generative Revealing */
+.fade-in-section {
+  opacity: 0;
+  transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+              clip-path 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter, clip-path;
+}
+
+/* 20 Reveal Variants */
+
+/* 1. fade-up */
+.reveal-fade-up { transform: translateY(60px); }
+.reveal-fade-up.is-visible { opacity: 1; transform: translateY(0); }
+
+/* 2. fade-down */
+.reveal-fade-down { transform: translateY(-60px); }
+.reveal-fade-down.is-visible { opacity: 1; transform: translateY(0); }
+
+/* 3. fade-left */
+.reveal-fade-left { transform: translateX(60px); }
+.reveal-fade-left.is-visible { opacity: 1; transform: translateX(0); }
+
+/* 4. reveal-fade-right */
+.reveal-fade-right { transform: translateX(-60px); }
+.reveal-fade-right.is-visible { opacity: 1; transform: translateX(0); }
+
+/* 5. blur */
+.reveal-blur { filter: blur(25px); }
+.reveal-blur.is-visible { opacity: 1; filter: blur(0); }
+
+/* 6. scale-up */
+.reveal-scale-up { transform: scale(0.93); }
+.reveal-scale-up.is-visible { opacity: 1; transform: scale(1); }
+
+/* 7. scale-down */
+.reveal-scale-down { transform: scale(1.07); }
+.reveal-scale-down.is-visible { opacity: 1; transform: scale(1); }
+
+/* 8. foggy (contrast + blur) */
+.reveal-foggy { filter: blur(15px) contrast(50%); }
+.reveal-foggy.is-visible { opacity: 1; filter: blur(0) contrast(100%); }
+
+/* 9. clip-h */
+.reveal-clip-h { clip-path: inset(0 50% 0 50%); }
+.reveal-clip-h.is-visible { opacity: 1; clip-path: inset(0 0 0 0); }
+
+/* 10. clip-v */
+.reveal-clip-v { clip-path: inset(50% 0 50% 0); }
+.reveal-clip-v.is-visible { opacity: 1; clip-path: inset(0 0 0 0); }
+
+/* 11. skew */
+.reveal-skew { transform: skewY(4deg) translateY(40px); }
+.reveal-skew.is-visible { opacity: 1; transform: skewY(0) translateY(0); }
+
+/* 12. exposure (starts bright white, fades to normal) */
+.reveal-exposure { filter: brightness(3) contrast(150%); }
+.reveal-exposure.is-visible { opacity: 1; filter: brightness(1) contrast(100%); }
+
+/* 13. high-contrast */
+.reveal-high-contrast { filter: contrast(300%) grayscale(100%); }
+.reveal-high-contrast.is-visible { opacity: 1; filter: contrast(100%) grayscale(20%); }
+
+/* 14. ghost (super slow fade in) */
+.reveal-ghost { transition-duration: 3s; }
+.reveal-ghost.is-visible { opacity: 0.85; }
+
+/* 15. drift-up (slow Y translation) */
+.reveal-drift-up { transform: translateY(120px); transition-duration: 2.5s; }
+.reveal-drift-up.is-visible { opacity: 1; transform: translateY(0); }
+
+/* 16. ink */
+.reveal-ink { filter: blur(8px) grayscale(100%) contrast(180%); }
+.reveal-ink.is-visible { opacity: 1; filter: blur(0) grayscale(20%) contrast(100%); }
+
+/* 17. slide-blur */
+.reveal-slide-blur { transform: translateY(40px) translateX(20px); filter: blur(15px); }
+.reveal-slide-blur.is-visible { opacity: 1; transform: translateY(0) translateX(0); filter: blur(0); }
+
+/* 18. vortex */
+.reveal-vortex { transform: rotate(4deg) scale(0.95); filter: blur(15px); }
+.reveal-vortex.is-visible { opacity: 1; transform: rotate(0) scale(1); filter: blur(0); }
+
+/* 19. flicker */
+.reveal-flicker { animation: none; }
+.reveal-flicker.is-visible { animation: flickerAnim 1.2s forwards; }
+
+@keyframes flickerAnim {
+  0% { opacity: 0; filter: brightness(2); }
+  15% { opacity: 0.4; }
+  30% { opacity: 0.1; }
+  45% { opacity: 0.85; }
+  60% { opacity: 0.3; }
+  80% { opacity: 0.9; }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+/* 20. glitch */
+.reveal-glitch { transform: translateX(0); }
+.reveal-glitch.is-visible { animation: glitchAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes glitchAnim {
+  0% { opacity: 0; transform: skewX(-15deg) scaleY(0.9); }
+  20% { opacity: 0.5; transform: skewX(10deg) translateX(-10px); }
+  40% { opacity: 0.2; transform: skewX(-5deg) translateX(10px); }
+  60% { opacity: 0.8; transform: skewX(2deg) scale(1.03); }
+  100% { opacity: 1; transform: skewX(0) scale(1); }
+}
+
+/* Spacing classes for vertical scroll orchestration */
+.space-none { margin-top: 0; }
+.space-small { margin-top: 6rem; }
+.space-medium { margin-top: 12rem; }
+.space-large { margin-top: 24rem; }
+.space-huge { margin-top: 40rem; }
+
+@media (max-width: 768px) {
+  .space-small { margin-top: 3rem; }
+  .space-medium { margin-top: 6rem; }
+  .space-large { margin-top: 10rem; }
+  .space-huge { margin-top: 15rem; }
+}

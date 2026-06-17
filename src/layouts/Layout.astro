@@ -1,0 +1,409 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "光と、時間と、こぼれたスープにまつわる、1コマの沈黙のマンガのようなフォトジェニック・ウェブジン" } = Astro.props;
+
+// Fetch series list to display in the Index Menu
+const seriesList = await getCollection('series');
+const sortedSeries = seriesList.sort((a, b) => a.data.order - b.data.order);
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    
+    <title>{title}</title>
+  </head>
+  <body>
+    <div id="warp-overlay"></div>
+    
+    <div class="site-container">
+      <header class="site-header">
+        <div class="header-inner">
+          <a href="/" class="site-logo">
+            <span>ks / 光る時間と、こぼれたsoup</span>
+          </a>
+          <nav class="site-nav">
+            <button id="menu-drift-btn" class="nav-btn">drift</button>
+            <button id="menu-index-btn" class="nav-btn">index</button>
+            <a href="/about" class="nav-link">about</a>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Full-screen Index Overlay Menu -->
+      <div id="index-menu" class="index-menu-overlay">
+        <button id="menu-close-btn" class="menu-close-btn">close</button>
+        <div class="menu-content">
+          <div class="menu-section">
+            <h3 class="menu-title">時空のポケット</h3>
+            <div class="volume-list">
+              <button class="volume-item-btn active" data-series-id="all">
+                <span class="vol-num">vol. ∞</span>
+                <span class="vol-title">時空を漂流する（シャッフル）</span>
+              </button>
+              {sortedSeries.map((s, index) => (
+                <button class="volume-item-btn" data-series-id={s.id}>
+                  <span class="vol-num">vol. {String(index + 1).padStart(2, '0')}</span>
+                  <span class="vol-title">{s.data.title.split('—')[1]?.trim() || s.data.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main class="site-main">
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <p>ks — a pocket of space-time</p>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Client-side logic for navigation and transitions -->
+    <script>
+      // Elements
+      const indexMenu = document.getElementById('index-menu');
+      const menuIndexBtn = document.getElementById('menu-index-btn');
+      const menuCloseBtn = document.getElementById('menu-close-btn');
+      const menuDriftBtn = document.getElementById('menu-drift-btn');
+      const volumeBtns = document.querySelectorAll('.volume-item-btn');
+      const warpOverlay = document.getElementById('warp-overlay');
+
+      // Open Index Menu
+      menuIndexBtn?.addEventListener('click', () => {
+        indexMenu?.classList.add('is-open');
+      });
+
+      // Close Index Menu
+      menuCloseBtn?.addEventListener('click', () => {
+        indexMenu?.classList.remove('is-open');
+      });
+
+      // Volume buttons click handling (Triggers series filter)
+      volumeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const seriesId = target.getAttribute('data-series-id');
+          if (!seriesId) return;
+
+          // Update active class in menu
+          volumeBtns.forEach(b => b.classList.remove('active'));
+          target.classList.add('active');
+
+          // Close menu
+          indexMenu?.classList.remove('is-open');
+
+          // Dispatch custom event to index page
+          window.dispatchEvent(new CustomEvent('ks-change-series', {
+            detail: { seriesId }
+          }));
+        });
+      });
+
+      // Drift button click (triggers instant warp/shuffle)
+      menuDriftBtn?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('ks-warp-drift'));
+      });
+
+      // Warp helper
+      window.addEventListener('ks-trigger-warp', () => {
+        if (!warpOverlay) return;
+        
+        // Show warp animation
+        warpOverlay.classList.add('is-warping');
+        
+        setTimeout(() => {
+          warpOverlay.classList.remove('is-warping');
+        }, 1200);
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+
+  /* Warp Overlay style for space-time trip transition */
+  #warp-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    filter: blur(30px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #warp-overlay.is-warping {
+    opacity: 1;
+    filter: blur(0px);
+    pointer-events: auto;
+  }
+</style>
+
+<style>
+  .site-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 2rem 3rem;
+    pointer-events: none;
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .site-logo, .site-nav {
+    pointer-events: auto;
+  }
+
+  .site-logo span {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--text-color);
+    opacity: 0.5;
+    transition: var(--transition-smooth);
+  }
+
+  .site-logo:hover span {
+    opacity: 1;
+    color: var(--accent-color);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+  }
+
+  .nav-link, .nav-btn {
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    padding: 0.2rem 0;
+    font: inherit;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    position: relative;
+  }
+
+  .nav-link::after, .nav-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--accent-color);
+    transition: var(--transition-smooth);
+  }
+
+  .nav-link:hover, .nav-btn:hover {
+    color: var(--text-color);
+  }
+
+  .nav-link:hover::after, .nav-btn:hover::after {
+    width: 100%;
+  }
+
+  /* Index Menu Overlay */
+  .index-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(4, 5, 7, 0.96);
+    backdrop-filter: blur(20px);
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .index-menu-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .menu-close-btn {
+    position: absolute;
+    top: 2rem;
+    right: 3rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+  }
+
+  .menu-close-btn:hover {
+    color: var(--text-color);
+  }
+
+  .menu-content {
+    max-width: 600px;
+    width: 100%;
+    padding: 2rem;
+  }
+
+  .menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .menu-title {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--accent-color);
+    text-align: center;
+  }
+
+  .volume-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .volume-item-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+    font-family: var(--font-serif);
+  }
+
+  .volume-item-btn .vol-num {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.6;
+  }
+
+  .volume-item-btn .vol-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  .volume-item-btn:hover,
+  .volume-item-btn.active {
+    color: var(--text-color);
+  }
+
+  .volume-item-btn.active .vol-title {
+    color: var(--accent-color);
+  }
+
+  .site-main {
+    flex: 1;
+    width: 100%;
+  }
+
+  .site-footer {
+    padding: 10rem 3rem 5rem 3rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    opacity: 0.3;
+  }
+
+  .footer-inner {
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .site-header {
+      padding: 1.5rem;
+      position: absolute;
+    }
+
+    .header-inner {
+      flex-direction: column;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .site-nav {
+      gap: 1.5rem;
+    }
+
+    .menu-close-btn {
+      right: 1.5rem;
+      top: 1.5rem;
+    }
+
+    .volume-item-btn .vol-title {
+      font-size: 1.2rem;
+    }
+
+    .site-footer {
+      padding: 6rem 1.5rem 3rem 1.5rem;
+    }
+  }
+</style>
